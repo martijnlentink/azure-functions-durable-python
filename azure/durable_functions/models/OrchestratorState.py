@@ -1,11 +1,11 @@
 import json
 from typing import List, Any, Dict, Optional, Union
 
-from .utils.json_utils import add_attrib
+from .utils.json_utils import ToJsonMixin, add_attrib
 from azure.durable_functions.models.actions.Action import Action
 
 
-class OrchestratorState:
+class OrchestratorState(ToJsonMixin):
     """Orchestration State.
 
     Used to communicate the state of the orchestration back to the durable
@@ -92,14 +92,3 @@ class OrchestratorState:
             for action_obj in action_list:
                 action_result_list.append(action_obj.to_json())
             json_dict['actions'].append(action_result_list)
-
-    def to_json_string(self) -> str:
-        """Convert object into a json string.
-
-        Returns
-        -------
-        str
-            The instance of the object in json string format
-        """
-        json_dict = self.to_json()
-        return json.dumps(json_dict)

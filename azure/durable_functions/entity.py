@@ -80,6 +80,7 @@ class Entity:
 
         response.state = context._state
         response.entity_exists = context._exists
+        response.signals.extend(context._signals)
         return response.to_json_string()
 
     @classmethod

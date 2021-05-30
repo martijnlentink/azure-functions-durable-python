@@ -1,3 +1,5 @@
+from abc import abstractmethod
+import json
 from typing import Dict, Any
 
 from ...constants import DATETIME_STRING_FORMAT
@@ -54,3 +56,28 @@ def add_json_attrib(json_dict: Dict[str, Any], object_,
         attribute_value = getattr(object_, attribute_name)
         if attribute_value:
             json_dict[alt_name or attribute_name] = attribute_value.to_json()
+
+
+class ToJsonMixin:
+
+    @abstractmethod
+    def to_json(self) -> Dict[str, Any]:
+        """Convert object into a json dictionary.
+
+        Returns
+        -------
+        Dict[str, Any]
+            The instance of the class converted into a json dictionary
+        """
+        pass
+
+    def to_json_string(self) -> str:
+        """Convert object into a json string.
+
+        Returns
+        -------
+        str
+            The instance of the object in json string format
+        """
+        json_dict = self.to_json()
+        return json.dumps(json_dict)

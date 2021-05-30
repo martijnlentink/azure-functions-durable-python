@@ -1,5 +1,8 @@
+from azure.durable_functions.models.entities.Signal import Signal
+from azure.durable_functions.models.DurableOrchestrationClient import DurableOrchestrationClient
 from typing import Optional, Any, Dict, Tuple, List, Callable
 from azure.functions._durable_functions import _deserialize_custom_object
+from .utils.entity_utils import EntityId
 import json
 
 
@@ -39,6 +42,7 @@ class DurableEntityContext:
         self._input: Any = None
         self._operation: Optional[str] = None
         self._result: Any = None
+        self._signals: List[Signal] = []
 
     @property
     def entity_name(self) -> str:
@@ -148,6 +152,38 @@ class DurableEntityContext:
                 raise Exception("initializer argument needs to be a callable function")
             state = initializer()
         return state
+
+    def signal_entity(self, entityId: EntityId, operation_name: str,
+                            operation_input: Optional[Any] = None,
+                            task_hub_name: Optional[str] = None,
+                            connection_name: Optional[str] = None) -> None:
+        """Signals an entity to perform an operation.
+
+        Parameters
+        ----------
+        entityId : EntityId
+            The EntityId of the targeted entity to perform operation.
+        operation_name: str
+            The name of the operation.
+        operation_input: Optional[Any]
+            The content for the operation.
+        task_hub_name: Optional[str]
+            The task hub name of the target entity.
+        connection_name: Optional[str]
+            The name of the connection string associated with [task_hub_name].
+
+        Raises
+        ------
+        Exception:
+            When the signal entity call failed with an unexpected status code
+
+        Returns
+        -------
+        None
+        """
+        self._signals.append(
+            Signal(entityId, operation_name, json.dumps(operation_input) if operation_input else "")
+        )
 
     def get_input(self) -> Any:
         """Get the input for this operation.

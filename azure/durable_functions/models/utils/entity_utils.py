@@ -1,3 +1,7 @@
+from ..utils.json_utils import add_attrib
+from typing import Dict, Union
+
+
 class EntityId:
     """EntityId.
 
@@ -79,6 +83,19 @@ class EntityId:
             A url path of the EntityId
         """
         return f'entities/{entity_id.name}/{entity_id.key}'
+
+    def to_json(self) -> Dict[str, Union[int, str]]:
+        """Convert object into a json dictionary.
+
+        Returns
+        -------
+        Dict[str, Any]
+            The instance of the class converted into a json dictionary
+        """
+        json_dict: Dict[str, Union[int, str]] = {}
+        add_attrib(json_dict, self, 'name')
+        add_attrib(json_dict, self, 'key')
+        return json_dict
 
     def __str__(self) -> str:
         """Print the string representation of this EntityId.

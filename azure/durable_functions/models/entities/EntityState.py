@@ -1,3 +1,4 @@
+from azure.durable_functions.models.utils.json_utils import ToJsonMixin
 from typing import List, Optional, Dict, Any
 from .Signal import Signal
 from azure.functions._durable_functions import _serialize_custom_object
@@ -5,7 +6,7 @@ from .OperationResult import OperationResult
 import json
 
 
-class EntityState:
+class EntityState(ToJsonMixin):
     """Entity State.
 
     Used to communicate the state of the entity back to the durable extension
@@ -58,17 +59,5 @@ class EntityState:
         json_dict["entityExists"] = self.entity_exists
         json_dict["entityState"] = json.dumps(self.state, default=_serialize_custom_object)
         json_dict["results"] = serialized_results
-        json_dict["signals"] = self.signals
+        json_dict["signals"] = list(map(lambda x: x.to_json(), self.signals))
         return json_dict
-
-    def to_json_string(self) -> str:
-        """Convert object into a json string.
-
-        Returns
-        -------
-        str
-            The instance of the object in json string format
-        """
-        # TODO: Same implementation as in Orchestrator.py, we should refactor to shared a base
-        json_dict = self.to_json()
-        return json.dumps(json_dict)

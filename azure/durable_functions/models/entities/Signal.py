@@ -1,3 +1,5 @@
+from ..utils.json_utils import add_attrib
+from typing import Dict, Union
 from ..utils.entity_utils import EntityId
 
 
@@ -60,3 +62,17 @@ class Signal:
             The Signal's input
         """
         return self._input
+
+    def to_json(self) -> Dict[str, Union[int, str]]:
+        """Convert object into a json dictionary.
+
+        Returns
+        -------
+        Dict[str, Any]
+            The instance of the class converted into a json dictionary
+        """
+        json_dict: Dict[str, Union[int, str]] = {}
+        json_dict["target"] = self.target.to_json()
+        add_attrib(json_dict, self, 'name')
+        add_attrib(json_dict, self, 'input')
+        return json_dict

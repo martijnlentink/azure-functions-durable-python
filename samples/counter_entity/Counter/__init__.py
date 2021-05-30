@@ -1,5 +1,6 @@
 import logging
 import json
+from azure.durable_functions.models.utils.entity_utils import EntityId
 
 import azure.functions as func
 import azure.durable_functions as df
@@ -23,6 +24,7 @@ def entity_function(context: df.DurableEntityContext):
     if operation == "add":
         amount = context.get_input()
         current_value += amount
+        context.signal_entity(EntityId("Counter", "myCounter"), "anders")
     elif operation == "reset":
         current_value = 0
     elif operation == "get":
